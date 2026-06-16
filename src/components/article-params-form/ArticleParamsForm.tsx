@@ -47,7 +47,10 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 			/>
 			<aside
 				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
-				<form className={styles.form} onSubmit={handleSubmit}>
+				<form
+					className={styles.form}
+					onSubmit={handleSubmit}
+					onReset={handleReset}>
 					<div className={styles.topContainer}>
 						<Text as='h2' size={31} weight={800} uppercase>
 							Задайте параметры
@@ -86,12 +89,7 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 						/>
 					</div>
 					<div className={styles.bottomContainer}>
-						<Button
-							title='Сбросить'
-							htmlType='reset'
-							type='clear'
-							onClick={handleReset}
-						/>
+						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
