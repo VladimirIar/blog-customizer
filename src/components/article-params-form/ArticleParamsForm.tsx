@@ -1,11 +1,12 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import clsx from 'clsx';
 import { Select } from '../../ui/select/Select';
 import { Separator } from 'src/ui/separator';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Text } from 'src/ui/text';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 import {
 	fontFamilyOptions,
 	fontColors,
@@ -24,29 +25,40 @@ type ArticleParamsFormProps = {
 };
 
 export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const [settings, setSettings] = useState(defaultArticleState);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [formValues, setFormValues] = useState(defaultArticleState);
+	const formRef = useRef<HTMLDivElement>(null);
 	const handleChange = (key: keyof ArticleStateType) => (value: OptionType) => {
-		setSettings((prev) => ({ ...prev, [key]: value }));
+		setFormValues((prev) => ({ ...prev, [key]: value }));
 	};
 	const handleReset = () => {
-		setSettings(defaultArticleState);
+		setFormValues(defaultArticleState);
+		onApply(defaultArticleState);
 	};
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
-		onApply(settings);
+		onApply(formValues);
 	};
+
+	useOutsideClickClose({
+		isOpen: isSidebarOpen,
+		rootRef: formRef,
+		onChange: setIsSidebarOpen,
+	});
 
 	return (
 		<>
 			<ArrowButton
-				isOpen={isOpen}
+				isOpen={isSidebarOpen}
 				onClick={() => {
-					setIsOpen(!isOpen);
+					setIsSidebarOpen(!isSidebarOpen);
 				}}
 			/>
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				ref={formRef}
+				className={clsx(styles.container, {
+					[styles.container_open]: isSidebarOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
@@ -56,13 +68,13 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 							Задайте параметры
 						</Text>
 						<Select
-							selected={settings.fontFamilyOption}
+							selected={formValues.fontFamilyOption}
 							options={fontFamilyOptions}
 							title='Шрифт'
 							onChange={handleChange('fontFamilyOption')}
 						/>
 						<Select
-							selected={settings.fontColor}
+							selected={formValues.fontColor}
 							options={fontColors}
 							title='Цвет шрифта'
 							onChange={handleChange('fontColor')}
@@ -70,19 +82,19 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 						<RadioGroup
 							name='fontSize'
 							options={fontSizeOptions}
-							selected={settings.fontSizeOption}
+							selected={formValues.fontSizeOption}
 							title='Размер шрифта'
 							onChange={handleChange('fontSizeOption')}
 						/>
 						<Separator />
 						<Select
-							selected={settings.backgroundColor}
+							selected={formValues.backgroundColor}
 							options={backgroundColors}
 							title='Цвет фона'
 							onChange={handleChange('backgroundColor')}
 						/>
 						<Select
-							selected={settings.contentWidth}
+							selected={formValues.contentWidth}
 							options={contentWidthArr}
 							title='Ширина контента'
 							onChange={handleChange('contentWidth')}
