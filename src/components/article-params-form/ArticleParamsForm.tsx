@@ -26,18 +26,18 @@ type ArticleParamsFormProps = {
 
 export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [formValues, setFormValues] = useState(defaultArticleState);
+	const [draftSettings, setDraftSettings] = useState(defaultArticleState);
 	const formRef = useRef<HTMLDivElement>(null);
 	const handleChange = (key: keyof ArticleStateType) => (value: OptionType) => {
-		setFormValues((prev) => ({ ...prev, [key]: value }));
+		setDraftSettings((prev) => ({ ...prev, [key]: value }));
 	};
 	const handleReset = () => {
-		setFormValues(defaultArticleState);
+		setDraftSettings(defaultArticleState);
 		onApply(defaultArticleState);
 	};
 	const handleSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
-		onApply(formValues);
+		onApply(draftSettings);
 	};
 
 	useOutsideClickClose({
@@ -68,13 +68,13 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 							Задайте параметры
 						</Text>
 						<Select
-							selected={formValues.fontFamilyOption}
+							selected={draftSettings.fontFamilyOption}
 							options={fontFamilyOptions}
 							title='Шрифт'
 							onChange={handleChange('fontFamilyOption')}
 						/>
 						<Select
-							selected={formValues.fontColor}
+							selected={draftSettings.fontColor}
 							options={fontColors}
 							title='Цвет шрифта'
 							onChange={handleChange('fontColor')}
@@ -82,19 +82,19 @@ export const ArticleParamsForm = ({ onApply }: ArticleParamsFormProps) => {
 						<RadioGroup
 							name='fontSize'
 							options={fontSizeOptions}
-							selected={formValues.fontSizeOption}
+							selected={draftSettings.fontSizeOption}
 							title='Размер шрифта'
 							onChange={handleChange('fontSizeOption')}
 						/>
 						<Separator />
 						<Select
-							selected={formValues.backgroundColor}
+							selected={draftSettings.backgroundColor}
 							options={backgroundColors}
 							title='Цвет фона'
 							onChange={handleChange('backgroundColor')}
 						/>
 						<Select
-							selected={formValues.contentWidth}
+							selected={draftSettings.contentWidth}
 							options={contentWidthArr}
 							title='Ширина контента'
 							onChange={handleChange('contentWidth')}
